@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsEnum } from 'class-validator';
+import { IsString, IsNumber, IsEnum, IsOptional, IsBoolean } from 'class-validator';
 import { DamageDealer } from '../enums/damage-dealer.enum';
 import { DealerQuality } from '../enums/dealer-quality.enum';
 
@@ -32,6 +32,8 @@ export class CreateUserDto {
   @IsNumber({}, { message: 'Must be a number' })
   readonly temple: number;
 
-  @ApiProperty({ example: true, description: 'Is user active' })
-  readonly isActive: boolean;
+  @ApiProperty({ example: true, description: 'Is user active', required: false })
+  @IsOptional()
+  @IsBoolean({ message: 'Must be a boolean' })
+  readonly isActive?: boolean;
 }

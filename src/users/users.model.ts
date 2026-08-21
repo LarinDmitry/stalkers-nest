@@ -1,5 +1,6 @@
 import { Column, DataType, Model, Table } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 import { DamageDealer } from './enums/damage-dealer.enum';
 import { DealerQuality } from './enums/dealer-quality.enum';
 
@@ -38,7 +39,8 @@ export class User extends Model<User, UserCreationAttrs> {
   @Column({ type: DataType.INTEGER, allowNull: false })
   declare temple: number;
 
-  @ApiProperty({ example: true, description: 'Is user active' })
+  @ApiProperty({ example: true, description: 'Is user active', required: false })
+  @IsOptional()
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   declare isActive: boolean;
 }
