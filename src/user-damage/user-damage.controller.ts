@@ -2,7 +2,6 @@ import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserDamageService } from './user-damage.service';
 import { CreateUserDamageDto } from './dto/create-user-damage.dto';
-import { UpdateUserDamageDto } from './dto/update-user-damage.dto';
 
 @ApiTags('User Damage')
 @Controller('user-damage')
@@ -16,14 +15,10 @@ export class UserDamageController {
     return this.userDamageService.getUserDamageInfo(userId);
   }
 
-  @ApiOperation({ summary: 'Update specific damage record by ID' })
-  @ApiParam({ name: 'id', example: 1, description: 'ID of the damage record' })
-  @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateUserDamageDto,
-  ) {
-    return this.userDamageService.updateDamageRecord(id, dto);
+  @ApiOperation({ summary: 'Create or update (upsert) damage record for user' })
+  @Patch()
+  upsert(@Body() dto: CreateUserDamageDto) {
+    return this.userDamageService.upsertDamageRecord(dto);
   }
 
   @ApiOperation({ summary: 'Get damage info for ALL users' })

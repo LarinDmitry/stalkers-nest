@@ -4,7 +4,6 @@ import { UserDamage } from './user-damage.model';
 import { User } from '../users/users.model';
 import { Statistic } from '../statistic/statistic.model';
 import { CreateUserDamageDto } from './dto/create-user-damage.dto';
-import { UpdateUserDamageDto } from './dto/update-user-damage.dto';
 
 @Injectable()
 export class UserDamageService {
@@ -79,21 +78,26 @@ export class UserDamageService {
     });
   }
 
-  async updateDamageRecord(id: number, dto: UpdateUserDamageDto) {
-    const record = await this.userDamageRepository.findByPk(id);
-
-    if (!record) {
-      throw new NotFoundException(`Damage record with ID ${id} not found`);
+  async upsertDamageRecord(dto: CreateUserDamageDto) {
+    const user = await this.userRepository.findByPk(dto.userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${dto.userId} not found`);
     }
 
-    if (dto.userId) {
-      const user = await this.userRepository.findByPk(dto.userId);
-      if (!user) {
-        throw new NotFoundException(`User with ID ${dto.userId} not found`);
-      }
+    const existingRecord = await this.userDamageRepository.findOne({
+      where: {
+        userId: dto.userId,
+        date: dto.date,
+      },
+    });
+
+    if (existingRecord) {
+      existingRecord.damageByDay = [...dto.damageByDay];
+      existingRecord.changed('damageByDay', true);
+      await existingRecord.save();
+      return existingRecord;
     }
 
-    await record.update(dto);
-    return record;
+    return await this.userDamageRepository.create(dto);
   }
 }
