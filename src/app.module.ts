@@ -5,6 +5,8 @@ import { UsersModule } from './users/users.module';
 import { StatisticModule } from './statistic/statistic.module';
 import { User } from './users/users.model';
 import { Statistic } from './statistic/statistic.model';
+import { UserDamageModule } from './user-damage/user-damage.module';
+import { UserDamage } from './user-damage/user-damage.model';
 import process from 'node:process';
 
 @Module({
@@ -21,7 +23,7 @@ import process from 'node:process';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [User, Statistic],
+      models: [User, Statistic, UserDamage],
       autoLoadModels: true,
       synchronize: true,
       dialectOptions: process.env.NODE_ENV === 'production' ? {
@@ -33,6 +35,7 @@ import process from 'node:process';
     }),
     UsersModule,
     StatisticModule,
+    UserDamageModule,
   ],
 })
 export class AppModule {}

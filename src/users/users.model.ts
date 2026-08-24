@@ -3,6 +3,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
 import { DamageDealer } from './enums/damage-dealer.enum';
 import { DealerQuality } from './enums/dealer-quality.enum';
+import { HasMany } from 'sequelize-typescript';
+import { UserDamage } from '../user-damage/user-damage.model';
 
 interface UserCreationAttrs {
   name: string;
@@ -43,4 +45,7 @@ export class User extends Model<User, UserCreationAttrs> {
   @IsOptional()
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   declare isActive: boolean;
+
+  @HasMany(() => UserDamage)
+  declare damageHistory: UserDamage[];
 }
