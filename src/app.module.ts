@@ -23,6 +23,13 @@ import process from 'node:process';
       database: process.env.POSTGRES_DB,
       models: [User, Statistic],
       autoLoadModels: true,
+      synchronize: true,
+      dialectOptions: process.env.NODE_ENV === 'production' ? {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        },
+      } : {},
     }),
     UsersModule,
     StatisticModule,
