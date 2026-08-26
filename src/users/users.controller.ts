@@ -1,8 +1,8 @@
-import { Body, Controller, Post, Get, Patch, Param, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Post, Get, Patch, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-import { ApiResponse, ApiOperation, ApiTags, ApiParam } from '@nestjs/swagger';
+import { ApiResponse, ApiOperation, ApiTags, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { User } from './users.model';
 
 @ApiTags('Users')
@@ -10,11 +10,18 @@ import { User } from './users.model';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @ApiOperation({ summary: 'Get all users' })
+  @ApiOperation({ summary: 'Get all users with optional isActive filter' })
+  @ApiQuery({
+    name: 'isActive',
+    required: false,
+    type: Boolean,
+    description: 'Filter users by isActive status',
+  })
   @ApiResponse({ status: 200, type: [User] })
   @Get()
-  getAll() {
-    return this.usersService.getAllUsers();
+  getAll(@Query('isActive') isActive?: string) {
+    const filterActive = isActive !== undefined ? isActive === 'true' : undefined;
+    return this.usersService.getAllUsers(filterActive);
   }
 
   @ApiOperation({ summary: 'Create user' })
@@ -29,10 +36,7 @@ export class UsersController {
   @ApiResponse({ status: 200, type: User })
   @ApiResponse({ status: 404, description: 'User not found' })
   @Patch(':id')
-  update(
-      @Param('id', ParseIntPipe) id: number,
-      @Body() updateUserDto: UpdateUserDto,
-  ) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateUser(id, updateUserDto);
   }
 }

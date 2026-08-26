@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { WhereOptions } from 'sequelize';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './users.model';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -12,8 +13,17 @@ export class UsersService {
     return await this.userRepository.create(dto);
   }
 
-  async getAllUsers() {
-    return await this.userRepository.findAll({ order: [['id', 'ASC']] });
+  async getAllUsers(isActive?: boolean) {
+    const where: WhereOptions<User> = {};
+
+    if (typeof isActive === 'boolean') {
+      where.isActive = isActive;
+    }
+
+    return await this.userRepository.findAll({
+      where,
+      order: [['id', 'ASC']],
+    });
   }
 
   async getUserById(id: number) {
