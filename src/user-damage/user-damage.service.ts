@@ -23,6 +23,7 @@ export class UserDamageService {
 
   async getAllUsersDamageInfo() {
     const users = await this.userRepository.findAll({
+      where: { isActive: true },
       include: [{ model: UserDamage }],
       order: [['id', 'ASC']],
     });
