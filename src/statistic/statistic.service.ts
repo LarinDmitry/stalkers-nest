@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import { Statistic } from './statistic.model';
 import { CreateStatisticDto } from './dto/create-statistic.dto';
 import { UpdateStatisticDto } from './dto/update-statistic.dto';
@@ -13,12 +14,13 @@ export class StatisticService {
   }
 
   async getRecentStats(limit?: number) {
-    const stats = await this.statisticRepository.findAll({
-      order: [['id', limit ? 'DESC' : 'ASC']],
+    return await this.statisticRepository.findAll({
+      order: [
+        [Sequelize.literal('SUBSTRING(date, 4, 2)'), 'DESC'],
+        [Sequelize.literal('SUBSTRING(date, 1, 2)'), 'DESC'],
+      ],
       ...(limit && { limit }),
     });
-
-    return limit ? stats.reverse() : stats;
   }
 
   async updateStatistic(id: number, dto: UpdateStatisticDto) {

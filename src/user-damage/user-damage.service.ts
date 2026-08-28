@@ -53,18 +53,18 @@ export class UserDamageService {
     };
   }
 
-  private async getStatsMap(): Promise<Map<string, number>> {
+  private async getStatsMap(): Promise<Map<string, string | number>> {
     const allStats = await this.statisticRepository.findAll();
-    const statsMap = new Map<string, number>();
+    const statsMap = new Map<string, string | number>();
     allStats.forEach((stat) => statsMap.set(stat.date, stat.total));
     return statsMap;
   }
 
-  private formatAndSortInfo(damageHistory: UserDamage[], statsMap: Map<string, number>) {
+  private formatAndSortInfo(damageHistory: UserDamage[], statsMap: Map<string, string | number>) {
     const info = damageHistory.map((item) => ({
       damage: item.damage,
       date: item.date,
-      guildTotal: statsMap.get(item.date) || 0,
+      guildTotal: statsMap.get(item.date) ?? '0',
       damageByDay: item.damageByDay,
     }));
 

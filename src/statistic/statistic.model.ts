@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 interface StatisticCreationAttrs {
   date: string;
-  total: number;
+  total: string | number;
   rate: number;
   newbies: number;
 }
@@ -18,16 +18,16 @@ export class Statistic extends Model<Statistic, StatisticCreationAttrs> {
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   declare date: string;
 
-  @ApiProperty({ example: 25314359409318800, description: 'Total value' })
+  @ApiProperty({ example: '25314359409318800', description: 'Total value' })
   @Column({
     type: DataType.BIGINT,
     allowNull: false,
     get() {
       const rawValue = this.getDataValue('total');
-      return rawValue ? Number(rawValue) : 0;
+      return rawValue ? BigInt(rawValue).toString() : '0';
     },
   })
-  declare total: number;
+  declare total: string | number;
 
   @ApiProperty({ example: 9, description: 'Rate' })
   @Column({ type: DataType.INTEGER, allowNull: false })
