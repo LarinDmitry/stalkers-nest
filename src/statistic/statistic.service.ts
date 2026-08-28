@@ -4,6 +4,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { Statistic } from './statistic.model';
 import { CreateStatisticDto } from './dto/create-statistic.dto';
 import { UpdateStatisticDto } from './dto/update-statistic.dto';
+import { StatisticSortBy } from './dto/get-stats-query.dto';
 
 @Injectable()
 export class StatisticService {
@@ -13,14 +14,23 @@ export class StatisticService {
     return await this.statisticRepository.create(dto);
   }
 
-  async getRecentStats(limit?: number) {
-    return await this.statisticRepository.findAll({
-      order: [
-        [Sequelize.literal('SUBSTRING(date, 4, 2)'), 'DESC'],
-        [Sequelize.literal('SUBSTRING(date, 1, 2)'), 'DESC'],
-      ],
+  async getRecentStats(limit?: number, sortBy: StatisticSortBy = StatisticSortBy.ID) {
+    if (sortBy === StatisticSortBy.DATE) {
+      return await this.statisticRepository.findAll({
+        order: [
+          [Sequelize.literal('SUBSTRING(date, 4, 2)'), 'DESC'],
+          [Sequelize.literal('SUBSTRING(date, 1, 2)'), 'DESC'],
+        ],
+        ...(limit && { limit }),
+      });
+    }
+
+    const stats = await this.statisticRepository.findAll({
+      order: [['id', limit ? 'DESC' : 'ASC']],
       ...(limit && { limit }),
     });
+
+    return limit ? stats.reverse() : stats;
   }
 
   async updateStatistic(id: number, dto: UpdateStatisticDto) {

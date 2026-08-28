@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Param,
-  DefaultValuePipe,
   ParseIntPipe,
   Patch,
   Post,
@@ -12,11 +11,12 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StatisticService } from './statistic.service';
 import { Statistic } from './statistic.model';
 import { CreateStatisticDto } from './dto/create-statistic.dto';
 import { UpdateStatisticDto } from './dto/update-statistic.dto';
+import { GetStatsQueryDto } from './dto/get-stats-query.dto';
 
 @ApiTags('Statistic')
 @Controller('statistic')
@@ -24,19 +24,10 @@ export class StatisticController {
   constructor(private statisticService: StatisticService) {}
 
   @ApiOperation({ summary: 'Get statistic records' })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    type: Number,
-    description: 'Number of recent months to fetch (if omitted, returns all records)',
-  })
   @ApiResponse({ status: 200, type: [Statistic] })
   @Get()
-  getStats(
-    @Query('limit', new DefaultValuePipe(undefined), new ParseIntPipe({ optional: true }))
-    limit?: number,
-  ) {
-    return this.statisticService.getRecentStats(limit);
+  getStats(@Query() query: GetStatsQueryDto) {
+    return this.statisticService.getRecentStats(query.limit, query.sortBy);
   }
 
   @ApiOperation({ summary: 'Add monthly statistic record' })
