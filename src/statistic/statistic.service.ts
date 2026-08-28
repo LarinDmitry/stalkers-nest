@@ -29,4 +29,12 @@ export class StatisticService {
     await statistic.update(dto);
     return statistic;
   }
+
+  async deleteStatistic(id: number): Promise<void> {
+    const statistic = await this.statisticRepository.findByPk(id);
+    if (!statistic) {
+      throw new NotFoundException(`Statistic record with ID ${id} not found`);
+    }
+    await statistic.destroy();
+  }
 }

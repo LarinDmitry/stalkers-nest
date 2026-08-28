@@ -8,6 +8,9 @@ import {
   Patch,
   Post,
   Query,
+  Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { StatisticService } from './statistic.service';
@@ -49,5 +52,15 @@ export class StatisticController {
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateStatisticDto) {
     return this.statisticService.updateStatistic(id, dto);
+  }
+
+  @ApiOperation({ summary: 'Delete monthly statistic record' })
+  @ApiParam({ name: 'id', example: 1, description: 'Statistic record ID' })
+  @ApiResponse({ status: 204, description: 'Record successfully deleted' })
+  @ApiResponse({ status: 404, description: 'Record not found' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.statisticService.deleteStatistic(id);
   }
 }
