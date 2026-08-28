@@ -13,4 +13,4 @@ jobs:
     steps:
       - name: Send keep-alive request to Render
         run: |
-          curl -s -f https://stalkers-nest.onrender.com/health || echo "Server cold start or error"
+          curl -s -f ${{ secrets.RENDER_HEALTH_URL }} || echo "Server cold start or error"
