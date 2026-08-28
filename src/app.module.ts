@@ -8,9 +8,10 @@ import { Statistic } from './statistic/statistic.model';
 import { UserDamageModule } from './user-damage/user-damage.module';
 import { UserDamage } from './user-damage/user-damage.model';
 import process from 'node:process';
+import { AppController } from './app.controller';
 
 @Module({
-  controllers: [],
+  controllers: [AppController],
   providers: [],
   imports: [
     ConfigModule.forRoot({
