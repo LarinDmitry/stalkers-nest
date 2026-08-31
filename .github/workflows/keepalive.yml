@@ -2,9 +2,7 @@ name: Keepalive Render Backend
 
 on:
   schedule:
-    # Run every 10 minutes (POSIX cron format)
-    - cron: '*/10 * * * *'
-  # Allows you to start a worker manually from the Actions tab in GitHub
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 jobs:
