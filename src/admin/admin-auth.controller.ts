@@ -1,7 +1,8 @@
-import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdminAuthService } from './admin-auth.service';
 import { LoginAdminDto } from './dto/login-admin.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @ApiTags('Admin Auth')
 @Controller('admin-auth')
@@ -17,8 +18,8 @@ export class AdminAuthController {
     return this.adminAuthService.login(dto);
   }
 
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create initial admin-auth (Registration)' })
   @ApiResponse({ status: 201, description: 'Admin created successfully' })
   @UsePipes(new ValidationPipe({ transform: true }))
