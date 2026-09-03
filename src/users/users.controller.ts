@@ -9,14 +9,23 @@ import {
   UsePipes,
   ValidationPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-import { ApiResponse, ApiOperation, ApiTags, ApiParam, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiResponse,
+  ApiOperation,
+  ApiTags,
+  ApiParam,
+  ApiQuery,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { User } from './users.model';
 import { GetUsersQueryDto } from './dto/get-users-query.dto';
 import { SortOrder, UserSortField } from './enums/user-sort-field';
+import { JwtAuthGuard } from '../admin/jwt-auth.guard';
 
 @ApiTags('Users')
 @Controller('users')
@@ -49,6 +58,8 @@ export class UsersController {
     return this.usersService.getAllUsers(query);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create user' })
   @ApiResponse({ status: 201, type: User })
   @Post()
@@ -56,6 +67,8 @@ export class UsersController {
     return this.usersService.createUser(userDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update user' })
   @ApiParam({ name: 'id', example: 1, description: 'User ID' })
   @ApiResponse({ status: 200, type: User })

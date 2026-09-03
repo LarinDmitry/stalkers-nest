@@ -5,10 +5,12 @@ import { UsersModule } from './users/users.module';
 import { StatisticModule } from './statistic/statistic.module';
 import { User } from './users/users.model';
 import { Statistic } from './statistic/statistic.model';
+import { Admin } from './admin/admin.model';
 import { UserDamageModule } from './user-damage/user-damage.module';
 import { UserDamage } from './user-damage/user-damage.model';
 import process from 'node:process';
 import { AppController } from './app.controller';
+import { AdminAuthModule } from './admin/admin-auth.module';
 
 @Module({
   controllers: [AppController],
@@ -24,19 +26,23 @@ import { AppController } from './app.controller';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [User, Statistic, UserDamage],
+      models: [User, Statistic, UserDamage, Admin],
       autoLoadModels: true,
       synchronize: true,
-      dialectOptions: process.env.NODE_ENV === 'production' ? {
-        ssl: {
-          require: true,
-          rejectUnauthorized: false,
-        },
-      } : {},
+      dialectOptions:
+        process.env.NODE_ENV === 'production'
+          ? {
+              ssl: {
+                require: true,
+                rejectUnauthorized: false,
+              },
+            }
+          : {},
     }),
     UsersModule,
     StatisticModule,
     UserDamageModule,
+    AdminAuthModule,
   ],
 })
 export class AppModule {}

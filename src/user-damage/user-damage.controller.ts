@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserDamageService } from './user-damage.service';
 import { CreateUserDamageDto } from './dto/create-user-damage.dto';
+import { JwtAuthGuard } from '../admin/jwt-auth.guard';
 
 @ApiTags('User Damage')
 @Controller('user-damage')
@@ -15,6 +16,8 @@ export class UserDamageController {
     return this.userDamageService.getUserDamageInfo(userId);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create or update (upsert) damage record for user' })
   @Patch()
   upsert(@Body() dto: CreateUserDamageDto) {
@@ -28,6 +31,8 @@ export class UserDamageController {
     return this.userDamageService.getAllUsersDamageInfo();
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Add damage record for user' })
   @Post()
   create(@Body() dto: CreateUserDamageDto) {

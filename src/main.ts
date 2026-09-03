@@ -19,6 +19,7 @@ async function start() {
     .setTitle('Backend API')
     .setDescription('Documentation REST API')
     .setVersion('1.0.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

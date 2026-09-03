@@ -10,13 +10,15 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StatisticService } from './statistic.service';
 import { Statistic } from './statistic.model';
 import { CreateStatisticDto } from './dto/create-statistic.dto';
 import { UpdateStatisticDto } from './dto/update-statistic.dto';
 import { GetStatsQueryDto } from './dto/get-stats-query.dto';
+import { JwtAuthGuard } from '../admin/jwt-auth.guard';
 
 @ApiTags('Statistic')
 @Controller('statistic')
@@ -30,14 +32,18 @@ export class StatisticController {
     return this.statisticService.getRecentStats(query.limit, query.sortBy);
   }
 
-  @ApiOperation({ summary: 'Add monthly statistic record' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Add statistic record' })
   @ApiResponse({ status: 201, type: Statistic })
   @Post()
   create(@Body() dto: CreateStatisticDto) {
     return this.statisticService.createStatistic(dto);
   }
 
-  @ApiOperation({ summary: 'Update monthly statistic record' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Update statistic record' })
   @ApiParam({ name: 'id', example: 1, description: 'Statistic record ID' })
   @ApiResponse({ status: 200, type: Statistic })
   @Patch(':id')
@@ -45,7 +51,9 @@ export class StatisticController {
     return this.statisticService.updateStatistic(id, dto);
   }
 
-  @ApiOperation({ summary: 'Delete monthly statistic record' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Delete statistic record' })
   @ApiParam({ name: 'id', example: 1, description: 'Statistic record ID' })
   @ApiResponse({ status: 204, description: 'Record successfully deleted' })
   @ApiResponse({ status: 404, description: 'Record not found' })
