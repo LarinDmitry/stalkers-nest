@@ -1,27 +1,29 @@
 'use strict';
 
+const { DataTypes } = require('sequelize');
+
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up({ context: queryInterface }) {
     await queryInterface.addColumn('users', 'updatedBy', {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: 'dima',
+      defaultValue: 'system',
     });
 
     await queryInterface.addColumn('statistic', 'updatedBy', {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: 'dima',
+      defaultValue: 'system',
     });
 
     await queryInterface.addColumn('user_damage', 'updatedBy', {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: 'dima',
+      defaultValue: 'system',
     });
   },
 
-  async down(queryInterface, Sequelize) {
+  async down({ context: queryInterface }) {
     await queryInterface.removeColumn('users', 'updatedBy');
     await queryInterface.removeColumn('statistic', 'updatedBy');
     await queryInterface.removeColumn('user_damage', 'updatedBy');

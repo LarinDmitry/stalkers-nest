@@ -28,7 +28,6 @@ import { AdminAuthModule } from './admin/admin-auth.module';
       database: process.env.POSTGRES_DB,
       models: [User, Statistic, UserDamage, Admin],
       autoLoadModels: true,
-      synchronize: true,
       dialectOptions:
         process.env.NODE_ENV === 'production'
           ? {
