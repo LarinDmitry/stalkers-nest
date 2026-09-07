@@ -26,7 +26,7 @@ export class JwtAuthGuard implements CanActivate {
         throw new UnauthorizedException('Access denied');
       }
 
-      request.admin = payload;
+      request.user = payload;
       return true;
     } catch {
       throw new UnauthorizedException('Invalid or expired token');

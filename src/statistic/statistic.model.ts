@@ -1,11 +1,13 @@
 import { Column, DataType, Model, Table } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 
 interface StatisticCreationAttrs {
   date: string;
   total: string | number;
   rate: number;
   newbies: number;
+  updatedBy?: string;
 }
 
 @Table({ tableName: 'statistic' })
@@ -36,4 +38,13 @@ export class Statistic extends Model<Statistic, StatisticCreationAttrs> {
   @ApiProperty({ example: 3, description: 'Newbies count' })
   @Column({ type: DataType.INTEGER, allowNull: false })
   declare newbies: number;
+
+  @ApiProperty({
+    example: 'admin_login',
+    description: 'Admin login who created/updated the record',
+    required: false,
+  })
+  @IsOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  declare updatedBy: string;
 }

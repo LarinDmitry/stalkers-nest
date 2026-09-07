@@ -11,8 +11,11 @@ import { UserSortField, SortOrder } from './enums/user-sort-field';
 export class UsersService {
   constructor(@InjectModel(User) private userRepository: typeof User) {}
 
-  async createUser(dto: CreateUserDto) {
-    return await this.userRepository.create(dto);
+  async createUser(dto: CreateUserDto, adminLogin?: string) {
+    return await this.userRepository.create({
+      ...dto,
+      updatedBy: adminLogin,
+    });
   }
 
   async getAllUsers(query: GetUsersQueryDto) {
@@ -39,9 +42,9 @@ export class UsersService {
     return user;
   }
 
-  async updateUser(id: number, dto: UpdateUserDto) {
+  async updateUser(id: number, dto: UpdateUserDto, adminLogin: string) {
     const user = await this.getUserById(id);
-    await user.update(dto);
+    await user.update({ ...dto, updatedBy: adminLogin });
     return user;
   }
 }

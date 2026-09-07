@@ -9,6 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -63,8 +64,8 @@ export class UsersController {
   @ApiOperation({ summary: 'Create user' })
   @ApiResponse({ status: 201, type: User })
   @Post()
-  create(@Body() userDto: CreateUserDto) {
-    return this.usersService.createUser(userDto);
+  createUser(@Body() dto: CreateUserDto, @Req() req: any) {
+    return this.usersService.createUser(dto, req.user?.login);
   }
 
   @ApiBearerAuth()
@@ -74,7 +75,11 @@ export class UsersController {
   @ApiResponse({ status: 200, type: User })
   @ApiResponse({ status: 404, description: 'User not found' })
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateUser(id, updateUserDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: any,
+  ) {
+    return this.usersService.updateUser(id, updateUserDto, req.user.login);
   }
 }

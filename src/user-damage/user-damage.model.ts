@@ -1,11 +1,13 @@
 import { Column, DataType, Model, Table, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../users/users.model';
+import { IsOptional } from 'class-validator';
 
 interface UserDamageCreationAttrs {
   userId: number;
   date: string;
   damageByDay: number[];
+  updatedBy?: string;
 }
 
 @Table({ tableName: 'user_damage' })
@@ -40,6 +42,15 @@ export class UserDamage extends Model<UserDamage, UserDamageCreationAttrs> {
     },
   })
   declare damageByDay: number[];
+
+  @ApiProperty({
+    example: 'admin_login',
+    description: 'Admin login who created/updated the record',
+    required: false,
+  })
+  @IsOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  declare updatedBy: string;
 
   @ApiProperty({ example: 80748041859953, description: 'Total damage for this record' })
   @Column({

@@ -36,4 +36,13 @@ export class CreateUserDto {
   @IsOptional()
   @IsBoolean({ message: 'Must be a boolean' })
   readonly isActive?: boolean;
+
+  @ApiProperty({
+    example: 'admin_login',
+    description: 'Admin login',
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'Must be a string' })
+  readonly updatedBy?: string;
 }

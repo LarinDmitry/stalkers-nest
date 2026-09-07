@@ -13,12 +13,15 @@ export class UserDamageService {
     @InjectModel(Statistic) private statisticRepository: typeof Statistic,
   ) {}
 
-  async createDamageRecord(dto: CreateUserDamageDto) {
+  async createDamageRecord(dto: CreateUserDamageDto, adminLogin?: string) {
     const user = await this.userRepository.findByPk(dto.userId);
     if (!user) {
       throw new NotFoundException(`User with ID ${dto.userId} not found`);
     }
-    return await this.userDamageRepository.create(dto);
+    return await this.userDamageRepository.create({
+      ...dto,
+      updatedBy: adminLogin,
+    });
   }
 
   async getAllUsersDamageInfo() {
@@ -66,6 +69,7 @@ export class UserDamageService {
       date: item.date,
       guildTotal: statsMap.get(item.date) ?? '0',
       damageByDay: item.damageByDay,
+      updatedBy: item.updatedBy,
     }));
 
     return info.sort((a, b) => {
@@ -79,7 +83,7 @@ export class UserDamageService {
     });
   }
 
-  async upsertDamageRecord(dto: CreateUserDamageDto) {
+  async upsertDamageRecord(dto: CreateUserDamageDto, adminLogin?: string) {
     const user = await this.userRepository.findByPk(dto.userId);
     if (!user) {
       throw new NotFoundException(`User with ID ${dto.userId} not found`);
@@ -95,10 +99,16 @@ export class UserDamageService {
     if (existingRecord) {
       existingRecord.damageByDay = [...dto.damageByDay];
       existingRecord.changed('damageByDay', true);
+      if (adminLogin) {
+        existingRecord.updatedBy = adminLogin;
+      }
       await existingRecord.save();
       return existingRecord;
     }
 
-    return await this.userDamageRepository.create(dto);
+    return await this.userDamageRepository.create({
+      ...dto,
+      updatedBy: adminLogin,
+    });
   }
 }

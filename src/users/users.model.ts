@@ -13,6 +13,7 @@ interface UserCreationAttrs {
   stars: number;
   temple: number;
   isActive?: boolean;
+  updatedBy?: string;
 }
 
 @Table({ tableName: 'users' })
@@ -45,6 +46,15 @@ export class User extends Model<User, UserCreationAttrs> {
   @IsOptional()
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   declare isActive: boolean;
+
+  @ApiProperty({
+    example: 'admin_login',
+    description: 'Admin login who created/updated the record',
+    required: false,
+  })
+  @IsOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  declare updatedBy: string;
 
   @HasMany(() => UserDamage)
   declare damageHistory: UserDamage[];

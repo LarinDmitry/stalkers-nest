@@ -10,8 +10,11 @@ import { StatisticSortBy } from './dto/get-stats-query.dto';
 export class StatisticService {
   constructor(@InjectModel(Statistic) private statisticRepository: typeof Statistic) {}
 
-  async createStatistic(dto: CreateStatisticDto) {
-    return await this.statisticRepository.create(dto);
+  async createStatistic(dto: CreateStatisticDto, adminLogin?: string) {
+    return await this.statisticRepository.create({
+      ...dto,
+      updatedBy: adminLogin,
+    });
   }
 
   async getRecentStats(limit?: number, sortBy: StatisticSortBy = StatisticSortBy.ID) {
@@ -33,12 +36,17 @@ export class StatisticService {
     return limit ? stats.reverse() : stats;
   }
 
-  async updateStatistic(id: number, dto: UpdateStatisticDto) {
+  async updateStatistic(id: number, dto: UpdateStatisticDto, adminLogin?: string) {
     const statistic = await this.statisticRepository.findByPk(id);
     if (!statistic) {
       throw new NotFoundException(`Statistic record with ID ${id} not found`);
     }
-    await statistic.update(dto);
+
+    await statistic.update({
+      ...dto,
+      ...(adminLogin && { updatedBy: adminLogin }),
+    });
+
     return statistic;
   }
 

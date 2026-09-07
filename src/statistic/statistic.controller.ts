@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StatisticService } from './statistic.service';
@@ -37,8 +38,8 @@ export class StatisticController {
   @ApiOperation({ summary: 'Add statistic record' })
   @ApiResponse({ status: 201, type: Statistic })
   @Post()
-  create(@Body() dto: CreateStatisticDto) {
-    return this.statisticService.createStatistic(dto);
+  create(@Body() dto: CreateStatisticDto, @Req() req: any) {
+    return this.statisticService.createStatistic(dto, req.user?.login);
   }
 
   @ApiBearerAuth()
@@ -47,8 +48,8 @@ export class StatisticController {
   @ApiParam({ name: 'id', example: 1, description: 'Statistic record ID' })
   @ApiResponse({ status: 200, type: Statistic })
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateStatisticDto) {
-    return this.statisticService.updateStatistic(id, dto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateStatisticDto, @Req() req: any) {
+    return this.statisticService.updateStatistic(id, dto, req.user?.login);
   }
 
   @ApiBearerAuth()
