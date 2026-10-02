@@ -19,7 +19,13 @@ export class UsersService {
   }
 
   async getAllUsers(query: GetUsersQueryDto) {
-    const { isActive, sortBy = UserSortField.ID, sortOrder = SortOrder.ASC } = query;
+    const {
+      isActive,
+      sortBy = UserSortField.ID,
+      sortOrder = SortOrder.ASC,
+      page = 1,
+      limit = 10,
+    } = query;
     const where: WhereOptions<User> = {};
 
     if (typeof isActive === 'boolean') {
@@ -28,10 +34,22 @@ export class UsersService {
 
     const order: Order = [[sortBy, sortOrder.toUpperCase()]];
 
-    return await this.userRepository.findAll({
+    const { rows, count } = await this.userRepository.findAndCountAll({
       where,
       order,
+      limit,
+      offset: (page - 1) * limit,
     });
+
+    return {
+      data: rows,
+      meta: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      },
+    };
   }
 
   async getUserById(id: number) {

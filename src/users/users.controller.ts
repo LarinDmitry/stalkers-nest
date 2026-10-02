@@ -52,7 +52,19 @@ export class UsersController {
     enum: SortOrder,
     description: 'Sort direction (default: asc)',
   })
-  @ApiResponse({ status: 200, type: [User] })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number (default: 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page, 1-100 (default: 10)',
+  })
+  @ApiResponse({ status: 200, description: 'Paginated users: { data: User[], meta }' })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Get()
   getAll(@Query() query: GetUsersQueryDto) {

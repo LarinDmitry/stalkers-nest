@@ -11,6 +11,8 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
   Req,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -27,9 +29,17 @@ export class StatisticController {
   constructor(private statisticService: StatisticService) {}
 
   @ApiOperation({ summary: 'Get statistic records' })
-  @ApiResponse({ status: 200, type: [Statistic] })
+  @ApiResponse({
+    status: 200,
+    type: [Statistic],
+    description: 'Array of records, or { data, meta } when `page` is provided',
+  })
+  @UsePipes(new ValidationPipe({ transform: true }))
   @Get()
   getStats(@Query() query: GetStatsQueryDto) {
+    if (query.page) {
+      return this.statisticService.getPaginatedStats(query.page, query.limit, query.sortBy);
+    }
     return this.statisticService.getRecentStats(query.limit, query.sortBy);
   }
 

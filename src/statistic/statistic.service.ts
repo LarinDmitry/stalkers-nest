@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Order } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { Statistic } from './statistic.model';
 import { CreateStatisticDto } from './dto/create-statistic.dto';
@@ -15,6 +16,27 @@ export class StatisticService {
       ...dto,
       updatedBy: adminLogin,
     });
+  }
+
+  async getPaginatedStats(page: number, limit = 10, sortBy: StatisticSortBy = StatisticSortBy.ID) {
+    const order: Order =
+      sortBy === StatisticSortBy.DATE
+        ? [
+            [Sequelize.literal('SUBSTRING(date, 4, 2)'), 'DESC'],
+            [Sequelize.literal('SUBSTRING(date, 1, 2)'), 'DESC'],
+          ]
+        : [['id', 'ASC']];
+
+    const { rows, count } = await this.statisticRepository.findAndCountAll({
+      order,
+      limit,
+      offset: (page - 1) * limit,
+    });
+
+    return {
+      data: rows,
+      meta: { total: count, page, limit, totalPages: Math.ceil(count / limit) },
+    };
   }
 
   async getRecentStats(limit?: number, sortBy: StatisticSortBy = StatisticSortBy.ID) {
